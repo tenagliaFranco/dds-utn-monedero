@@ -1,14 +1,15 @@
 package dds.monedero.model;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
 import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MonederoTest {
   private Cuenta cuenta;
@@ -21,7 +22,7 @@ public class MonederoTest {
   @Test
   @DisplayName("Es posible poner $1500 en una cuenta vacía")
   void Poner() {
-    cuenta.poner(1500);
+    assertDoesNotThrow(() -> cuenta.poner(1500));
   }
 
   @Test
@@ -33,9 +34,11 @@ public class MonederoTest {
   @Test
   @DisplayName("Es posible realizar múltiples depósitos consecutivos")
   void TresDepositos() {
-    cuenta.poner(1500);
-    cuenta.poner(456);
-    cuenta.poner(1900);
+    assertDoesNotThrow(() -> {
+      cuenta.poner(1500);
+      cuenta.poner(456);
+      cuenta.poner(1900);
+    });
   }
 
   @Test
@@ -71,6 +74,16 @@ public class MonederoTest {
   @DisplayName("No es posible extraer un monto negativo")
   void ExtraerMontoNegativo() {
     assertThrows(MontoNegativoException.class, () -> cuenta.sacar(-500));
+  }
+
+  @Test
+  @DisplayName("El monto extraido de hoy es 100")
+  void ExtraccionesDeHoy() {
+    cuenta.setSaldo(10000);
+    cuenta.agregarMovimiento(LocalDate.of(2025,4,26), 1500, false);
+    cuenta.sacar(20);
+    cuenta.sacar(80);
+    assertEquals(100, cuenta.getMontoExtraidoA(LocalDate.now()));
   }
 
 }
