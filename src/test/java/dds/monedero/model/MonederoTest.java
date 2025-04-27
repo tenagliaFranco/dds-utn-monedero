@@ -80,7 +80,7 @@ public class MonederoTest {
   @DisplayName("El monto extraido de hoy es 100")
   void ExtraccionesDeHoy() {
     cuenta.setSaldo(10000);
-    cuenta.agregarMovimiento(LocalDate.of(2025,4,26), 1500, false);
+    cuenta.agregarMovimiento(new MovimientoDeposito(LocalDate.of(2025,4,26), 1500));
     cuenta.sacar(20);
     cuenta.sacar(80);
     assertEquals(100, cuenta.getMontoExtraidoA(LocalDate.now()));
