@@ -25,7 +25,7 @@ public class Cuenta {
   public void poner(double cuanto) {
     verificarMonto(cuanto);
     verificarMovimientosDiarios();
-    new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
+    agregarMovimiento(new Movimiento(LocalDate.now(), cuanto, true));
   }
 
   public void sacar(double cuanto) {
@@ -42,9 +42,13 @@ public class Cuenta {
     new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
   }
 
-  public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
-    var movimiento = new Movimiento(fecha, cuanto, esDeposito);
+  public void agregarMovimiento(Movimiento movimiento) {
+    calcularSaldo(movimiento);
     movimientos.add(movimiento);
+  }
+
+  public void calcularSaldo(Movimiento movimiento) {
+    saldo += movimiento.calcularValor();
   }
 
   public double getMontoExtraidoA(LocalDate fecha) {
